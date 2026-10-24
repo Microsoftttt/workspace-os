@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WORKSPACE OS</title>
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --panel: #121212;
+      --panel-2: #171717;
+      --panel-3: #1D1D1D;
+      --text: #F5F5F5;
+      --muted: #B8B8B8;
+      --border: #2B2B2B;
+      --green: #22C55E;
+      --green-soft: rgba(34, 197, 94, 0.12);
+      --red: #EF4444;
+      --red-soft: rgba(239, 68, 68, 0.12);
+      --shadow: rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      padding: 20px;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    .app {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 700;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--green);
+    }
+
+    .btn.primary {
+      background: var(--green);
+      color: #071109;
+      border-color: var(--green);
+      font-weight: 700;
+    }
+
+    .btn.alert {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 16px;
+      min-height: 120px;
+    }
+
+    .kpi-label {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 700;
+    }
+
+    .kpi-sub {
+      margin-top: 8px;
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 12px 22px var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+    }
+
+    .badge.green {
+      color: var(--green);
+      border-color: rgba(34, 197, 94, 0.4);
+      background: var(--green-soft);
+    }
+
+    .badge.red {
+      color: var(--red);
+      border-color: rgba(239, 68, 68, 0.4);
+      background: var(--red-soft);
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .task-card {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .task-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(34, 197, 94, 0.35);
+    }
+
+    .task-card .tag-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tag.high {
+      color: var(--red);
+      border-color: rgba(239, 68, 68, 0.4);
+      background: var(--red-soft);
+    }
+
+    .tag.medium {
+      color: var(--text);
+    }
+
+    .tag.low {
+      color: var(--green);
+      border-color: rgba(34, 197, 94, 0.4);
+      background: var(--green-soft);
+    }
+
+    .task-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .task-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .progress-block {
+      margin-top: 16px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 62%;
+      background: var(--green);
+    }
+
+    .mini-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+    }
+
+    .mini-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.94rem;
+    }
+
+    .mini-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+    }
+
+    .dot.red {
+      background: var(--red);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .meeting-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .meeting-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 12px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .meeting-time {
+      min-width: 90px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .meeting-body {
+      flex: 1;
+    }
+
+    .meeting-body strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .meeting-body span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .notes-box {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 140px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .stats-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stat-item {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .stat-item-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-bar {
+      height: 10px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .stat-fill {
+      height: 100%;
+      background: var(--green);
+    }
+
+    .achievement-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .achievement-pill {
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.32);
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      color: var(--text);
+    }
+
+    .table th,
+    .table td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .table th {
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+    }
+
+    .table td.status {
+      font-weight: 700;
+    }
+
+    .status.on-track {
+      color: var(--green);
+    }
+
+    .status.review {
+      color: var(--red);
+    }
+
+    .status.pending {
+      color: var(--muted);
+    }
+
+    .hstack {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .section-grid,
+      .journal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+      .task-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 14px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .meeting-item {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">Personal work intelligence</p>
+        <h1>WORKSPACE OS</h1>
+      </div>
+      <div class="top-actions">
+        <button class="btn">Sync</button>
+        <button class="btn primary">New update</button>
+        <button class="btn alert">Priority review</button>
+      </div>
+    </header>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <p class="kpi-label">Active tasks</p>
+        <p class="kpi-value">24</p>
+        <div class="kpi-sub">+3 from last week</div>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-label">Meetings</p>
+        <p class="kpi-value">7</p>
+        <div class="kpi-sub">2 next this week</div>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-label">Learning</p>
+        <p class="kpi-value">11h</p>
+        <div class="kpi-sub">Goal: 12h</div>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-label">Research notes</p>
+        <p class="kpi-value">18</p>
+        <div class="kpi-sub">5 updated today</div>
+      </article>
+
+      <article class="kpi-card">
+        <p class="kpi-label">Completion</p>
+        <p class="kpi-value">76%</p>
+        <div class="kpi-sub">On track</div>
+      </article>
+    </section>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Current priorities</h2>
+          <span class="badge green">On track</span>
+        </div>
+
+        <div class="task-grid">
+          <article class="task-card">
+            <div class="tag-row">
+              <span class="tag high">High</span>
+              <span class="tag">CSR</span>
+            </div>
+            <h3>Research Microsoft CSR efforts in AI skilling programs</h3>
+            <div class="task-meta">
+              <span>Due today</span>
+              <span>62%</span>
+            </div>
+            <div class="progress-block">
+              <div class="progress-top">
+                <span>Progress</span>
+                <span>62%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="task-card">
+            <div class="tag-row">
+              <span class="tag medium">Medium</span>
+              <span class="tag">Research</span>
+            </div>
+            <h3>Prepare summary on AI Skills Navigator and certifications</h3>
+            <div class="task-meta">
+              <span>Due Tue</span>
+              <span>48%</span>
+            </div>
+            <div class="progress-block">
+              <div class="progress-top">
+                <span>Progress</span>
+                <span>48%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:48%"></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="task-card">
+            <div class="tag-row">
+              <span class="tag low">Low</span>
+              <span class="tag">Ops</span>
+            </div>
+            <h3>Update internship workflow tracker and reporting notes</h3>
+            <div class="task-meta">
+              <span>Due Thu</span>
+              <span>80%</span>
+            </div>
+            <div class="progress-block">
+              <div class="progress-top">
+                <span>Progress</span>
+                <span>80%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:80%"></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-header">
+          <h2>Daily pulse</h2>
+          <span class="badge red">Priority</span>
+        </div>
+
+        <div class="mini-list">
+          <div class="mini-item">
+            <div>
+              <strong>Research update</strong>
+              <span>Documenting AI Talent Mission workflow</span>
+            </div>
+            <div class="dot"></div>
+          </div>
+
+          <div class="mini-item">
+            <div>
+              <strong>Meeting prep</strong>
+              <span>Agenda and notes for CSR sync</span>
+            </div>
+            <div class="dot"></div>
+          </div>
+
+          <div class="mini-item">
+            <div>
+              <strong>Action required</strong>
+              <span>Review NSDC/SIDH accreditation notes</span>
+            </div>
+            <div class="dot red"></div>
+          </div>
+
+          <div class="mini-item">
+            <div>
+              <strong>Learning block</strong>
+              <span>AI Microdegree and Microsoft learning path</span>
+            </div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="section-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Upcoming meetings</h2>
+          <span class="badge green">This week</span>
+        </div>
+
+        <div class="meeting-list">
+          <div class="meeting-item">
+            <div class="meeting-time">09:30 AM</div>
+            <div class="meeting-body">
+              <strong>CSR Project Sync</strong>
+              <span>Review status, blockers, and next steps</span>
+            </div>
+            <span class="badge green">Confirmed</span>
+          </div>
+
+          <div class="meeting-item">
+            <div class="meeting-time">12:00 PM</div>
+            <div class="meeting-body">
+              <strong>Research Discussion</strong>
+              <span>AI Skills Navigator and skilling pathways</span>
+            </div>
+            <span class="badge">Planned</span>
+          </div>
+
+          <div class="meeting-item">
+            <div class="meeting-time">03:00 PM</div>
+            <div class="meeting-body">
+              <strong>Mentor check-in</strong>
+              <span>Progress review and reporting notes</span>
+            </div>
+            <span class="badge red">Needs prep</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Quick notes</h2>
+          <span class="badge">Saved</span>
+        </div>
+
+        <div class="notes-box">
+          - Microsoft CSR efforts are strongest where they combine skilling, workforce enablement, and ecosystem coordination.
+          <br><br>
+          - AI Talent Mission and AI Microdegree align well with internship goals for research, documentation, and implementation learning.
+          <br><br>
+          - Continue tracking portals, accreditation workflows, and public-facing learning pathways for future reporting.
+        </div>
+      </section>
+    </div>
+
+    <div class="journal-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Learning and growth</h2>
+          <span class="badge green">Strong momentum</span>
+        </div>
+
+        <div class="stats-list">
+          <div class="stat-item">
+            <div class="stat-item-header">
+              <span>AI learning</span>
+              <span>84%</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill" style="width:84%"></div>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-item-header">
+              <span>Microsoft tools</span>
+              <span>68%</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill" style="width:68%"></div>
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-item-header">
+              <span>Business process mapping</span>
+              <span>73%</span>
+            </div>
+            <div class="stat-bar">
+              <div class="stat-fill" style="width:73%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Achievements</h2>
+          <span class="badge">New</span>
+        </div>
+
+        <div class="achievement-list">
+          <span class="achievement-pill">CSR research completed</span>
+          <span class="achievement-pill">Meeting notes logged</span>
+          <span class="achievement-pill">Workflow summary submitted</span>
+          <span class="achievement-pill">AI learning streak</span>
+          <span class="achievement-pill">Documentation update</span>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Project tracker</h2>
+        <span class="badge">Live</span>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Owner</th>
+            <th>Progress</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Microsoft CSR Intelligence Review</td>
+            <td>Self</td>
+            <td>76%</td>
+            <td class="status on-track">On track</td>
+          </tr>
+          <tr>
+            <td>AI Skills Navigator Review</td>
+            <td>Self</td>
+            <td>52%</td>
+            <td class="status pending">Pending</td>
+          </tr>
+          <tr>
+            <td>NSDC &amp; SIDH Workflow Mapping</td>
+            <td>Self</td>
+            <td>41%</td>
+            <td class="status review">Review</td>
+          </tr>
+          <tr>
+            <td>Internship Reporting Pack</td>
+            <td>Self</td>
+            <td>89%</td>
+            <td class="status on-track">On track</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+</body>
+</html>
